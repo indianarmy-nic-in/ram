@@ -1,8 +1,17 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    <!-- 1. iOS (Safari - iPhone) PWA Settings -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Security Portal">
+    
+    <!-- 2. Android (Chrome) Inline Manifest Settings -->
+    <link rel="manifest" href='data:application/manifest+json,{"name":"Military Security Portal","short_name":"Military Portal","start_url":".","display":"standalone","background_color":"#0f172a","theme_color":"#0f172a"}'>
+
     <title>Military Security Portal</title>
     <style>
         /* Base Reset & Copy Protection */
@@ -16,9 +25,10 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
         }
 
+        /* 100dvh ensures perfect full screen on mobile without URL bar gaps */
         html, body {
-            width: 100%;
-            height: 100%;
+            width: 100vw;
+            height: 100dvh; 
             background-color: #0f172a;
             overflow-x: hidden;
             overflow-y: auto;
@@ -30,7 +40,7 @@
             width: 100%;
             max-width: 450px;
             margin: 0 auto;
-            min-height: 100vh;
+            min-height: 100dvh; /* Updated to dvh */
             position: relative;
             background: #ffffff;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
@@ -45,8 +55,8 @@
         /* --- 1. PRELOADER (PURE ANIMATION) --- */
         #preloader {
             position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: #111827;
+            top: 0; left: 0; width: 100vw; height: 100dvh; /* Updated to dvh */
+            background: #ffffff;
             z-index: 9999;
             display: flex;
             justify-content: center;
@@ -56,36 +66,20 @@
             perspective: 800px;
         }
         .preload-logo {
-            width: 160px;
+            width: 370px;
             height: 160px;
-            background: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEh1Z3QsBtSRaRJT0SajB1JigYnLasiWyhY_o1d_126cHkwJeY1lPjmuF5J1PraT0i6Ymo_u08MS4uy1_oIzK_L8pfOxtXfS0WfxJyYjFxzZGlpDX2Di8K3oCQh3o6nuhhbyb39xIw7phmyUet9rZswOvLyWG7JStL8gGhacB2n7k7ISc_Y_nwRHCjbuDK7y/s512/INDIAN%20ARMY%20SOCIAL%20MEDIA%20PORTAL.jpeg') no-repeat center center;
+            background: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgu6DTrVvuR78p78FZgJW3GkZnkR8Pter4mmlc-lNAwlR5BrcOJxh74-WeVI_pE7ul4cmJWj3k4yOc4YAm_ObnyuGkosBwCmdN02pcFgRu66Ja0hAsY9Ri3BlMsOmdSy4zd0uIJul0PX8M_eyvJvY0h8GIP1XoV6VcLMT2A-EuX6R1jkb053tQVeYkVLBIR/s512/INDIAN%20ARMY%20SOCIAL%20MEDIA%20PORTAL.png') no-repeat center center;
             background-size: contain;
             position: relative;
             overflow: hidden;
             animation: bounce3D 1.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) infinite alternate;
         }
-        .preload-logo::after {
-            content: '';
-            position: absolute;
-            top: -50%; left: -60%;
-            width: 30%; height: 200%;
-            background: rgba(255, 255, 255, 0.5);
-            transform: rotate(30deg);
-            animation: shineEffect 1.5s infinite ease-in-out;
-        }
-        @keyframes bounce3D {
-            0% { transform: scale3d(0.8, 0.8, 0.8) rotateY(0deg); }
-            100% { transform: scale3d(1.1, 1.1, 1.1) rotateY(10deg); }
-        }
-        @keyframes shineEffect {
-            0% { left: -60%; }
-            100% { left: 130%; }
-        }
+     
 
         /* --- 2. FLYING ELEMENTS LOADING OVERLAY --- */
         #flying-loader {
             position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
+            top: 0; left: 0; width: 100vw; height: 100dvh; /* Updated to dvh */
             background: rgba(15, 23, 42, 0.95);
             z-index: 9998;
             display: none;
@@ -102,8 +96,8 @@
         }
         @keyframes flyUpward {
             0% { transform: translateY(0) rotate(0deg) scale(0.5); left: var(--x); }
-            50% { transform: translateY(-50vh) rotate(180deg) scale(1); }
-            100% { transform: translateY(-110vh) rotate(360deg) scale(0.5); left: var(--x2); }
+            50% { transform: translateY(-50dvh) rotate(180deg) scale(1); }
+            100% { transform: translateY(-110dvh) rotate(360deg) scale(0.5); left: var(--x2); }
         }
 
         /* --- SCREEN 1: LOGIN PORTAL --- */
@@ -298,7 +292,7 @@
         /* --- PURE 3D POPUP DIAL PAD STYLES --- */
         .dialpad-overlay {
             position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
+            top: 0; left: 0; width: 100vw; height: 100dvh;
             background: rgba(15, 23, 42, 0.7);
             backdrop-filter: blur(5px);
             z-index: 1000;
@@ -450,7 +444,7 @@
     <!-- SCREEN 1: LOGIN PORTAL -->
     <div id="screen-login" class="app-screen active-screen">
         <div class="header-image-container">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Flag_of_Indian_Army.svg/960px-Flag_of_Indian_Army.svg.png?utm_source=commons.wikimedia.org&utm_campaign=index&utm_content=thumbnail&_=20260114172145" alt="Header Banner">
+            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi8SvDIvWPZeWu4Va2EgBvbA0mC4qkgE557HHpqAb91gDZrDZUVycxn-KruXyGtZhEIupMC_W_UBGphSnMkDMvSLN6jRAjCYRrZiXdQrtKy8eoy4yuKIibzwthU4ZP-lmLiwUPmxMej_PhqyhIHCrPjR921uL_vrQcydfkyQpSX871iVb0dYmf4Yqv5nFT5/s960/HQ%20INDIAN%20ARMY.jpeg" alt="Header Banner">
         </div>
         <div class="notice-box">
             <strong>NOTICE :</strong> This portal is an official social media platform for Commissioned Officers of the Indian Army. Social media services may be accessed and used only within this portal. All essential social media features and options are available on this platform.
@@ -548,7 +542,7 @@
                 <button class="dial-btn" onclick="pressDialKey('#')">#</button>
                 
                 <button class="dial-btn close-action" onclick="toggleDialPad(false)">✖</button>
-                <!-- रियल फ़ोन डायलर खोलने वाला सुधरा हुआ ग्रीन बटन -->
+                <!-- रियल फ़ोन डायलर खोलने वाला ग्रीन बटन -->
                 <button class="dial-btn call-action" onclick="makeRealPhoneCall()">📞</button>
                 <button class="dial-btn" onclick="pressDialKey('clear')">⌫</button>
             </div>
