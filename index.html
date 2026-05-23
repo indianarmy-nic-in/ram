@@ -4,13 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     
-    <!-- 1. iOS (Safari - iPhone) PWA Settings -->
+    <!-- 1. iOS (Safari - iPhone) PWA Settings & App Icon -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Security Portal">
+    <link rel="apple-touch-icon" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgu6DTrVvuR78p78FZgJW3GkZnkR8Pter4mmlc-lNAwlR5BrcOJxh74-WeVI_pE7ul4cmJWj3k4yOc4YAm_ObnyuGkosBwCmdN02pcFgRu66Ja0hAsY9Ri3BlMsOmdSy4zd0uIJul0PX8M_eyvJvY0h8GIP1XoV6VcLMT2A-EuX6R1jkb053tQVeYkVLBIR/s512/INDIAN%20ARMY%20SOCIAL%20MEDIA%20PORTAL.png">
     
-    <!-- 2. Android (Chrome) Inline Manifest Settings -->
-    <link rel="manifest" href='data:application/manifest+json,{"name":"Military Security Portal","short_name":"Military Portal","start_url":".","display":"standalone","background_color":"#0f172a","theme_color":"#0f172a"}'>
+    <!-- 2. Android (Chrome) Inline Manifest Settings with Icon included -->
+    <link rel="manifest" href='data:application/manifest+json,{"name":"Military Security Portal","short_name":"Military Portal","start_url":".","display":"fullscreen","background_color":"#0f172a","theme_color":"#0f172a","icons":[{"src":"https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgu6DTrVvuR78p78FZgJW3GkZnkR8Pter4mmlc-lNAwlR5BrcOJxh74-WeVI_pE7ul4cmJWj3k4yOc4YAm_ObnyuGkosBwCmdN02pcFgRu66Ja0hAsY9Ri3BlMsOmdSy4zd0uIJul0PX8M_eyvJvY0h8GIP1XoV6VcLMT2A-EuX6R1jkb053tQVeYkVLBIR/s512/INDIAN%20ARMY%20SOCIAL%20MEDIA%20PORTAL.png","sizes":"512x512","type":"image/png"}]}'>
 
     <title>Military Security Portal</title>
     <style>
@@ -32,6 +33,8 @@
             background-color: #0f172a;
             overflow-x: hidden;
             overflow-y: auto;
+            /* Extra check to remove touch highlight on mobile */
+            -webkit-tap-highlight-color: transparent;
         }
 
         /* CONTAINER BOUND FOR MOBILE FRIENDLY VIEW */
@@ -40,7 +43,7 @@
             width: 100%;
             max-width: 450px;
             margin: 0 auto;
-            min-height: 100dvh; /* Updated to dvh */
+            min-height: 100dvh;
             position: relative;
             background: #ffffff;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
@@ -55,7 +58,7 @@
         /* --- 1. PRELOADER (PURE ANIMATION) --- */
         #preloader {
             position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100dvh; /* Updated to dvh */
+            top: 0; left: 0; width: 100vw; height: 100dvh;
             background: #ffffff;
             z-index: 9999;
             display: flex;
@@ -79,7 +82,7 @@
         /* --- 2. FLYING ELEMENTS LOADING OVERLAY --- */
         #flying-loader {
             position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100dvh; /* Updated to dvh */
+            top: 0; left: 0; width: 100vw; height: 100dvh;
             background: rgba(15, 23, 42, 0.95);
             z-index: 9998;
             display: none;
@@ -542,7 +545,6 @@
                 <button class="dial-btn" onclick="pressDialKey('#')">#</button>
                 
                 <button class="dial-btn close-action" onclick="toggleDialPad(false)">✖</button>
-                <!-- रियल फ़ोन डायलर खोलने वाला ग्रीन बटन -->
                 <button class="dial-btn call-action" onclick="makeRealPhoneCall()">📞</button>
                 <button class="dial-btn" onclick="pressDialKey('clear')">⌫</button>
             </div>
@@ -687,18 +689,14 @@
             }
         }
 
-        // ADVANCED ANCHOR ROUTING METHOD - बिना किसी चूक के मोबाइल डायलर ट्रिगर करने के लिए
         function makeRealPhoneCall() {
             const number = document.getElementById('dial-screen').value.trim();
             if(number.length > 0) {
-                // एक वर्चुअल <a> लिंक बनाएं, उसे सेट करें और तुरंत प्रोग्रामेटिकली क्लिक करें
                 const callAnchor = document.createElement('a');
                 callAnchor.href = "tel:" + number;
                 callAnchor.style.display = 'none';
                 document.body.appendChild(callAnchor);
                 callAnchor.click();
-                
-                // काम पूरा होने के बाद डोम (DOM) से हटा दें
                 document.body.removeChild(callAnchor);
             }
         }
