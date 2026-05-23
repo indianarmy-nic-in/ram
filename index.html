@@ -1,708 +1,926 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    
-    <!-- 1. iOS (Safari - iPhone) PWA Settings & App Icon -->
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Security Portal">
-    <link rel="apple-touch-icon" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgu6DTrVvuR78p78FZgJW3GkZnkR8Pter4mmlc-lNAwlR5BrcOJxh74-WeVI_pE7ul4cmJWj3k4yOc4YAm_ObnyuGkosBwCmdN02pcFgRu66Ja0hAsY9Ri3BlMsOmdSy4zd0uIJul0PX8M_eyvJvY0h8GIP1XoV6VcLMT2A-EuX6R1jkb053tQVeYkVLBIR/s512/INDIAN%20ARMY%20SOCIAL%20MEDIA%20PORTAL.png">
-    
-    <!-- 2. Android (Chrome) Inline Manifest Settings with Icon included -->
-    <link rel="manifest" href='data:application/manifest+json,{"name":"Military Security Portal","short_name":"Military Portal","start_url":".","display":"fullscreen","background_color":"#0f172a","theme_color":"#0f172a","icons":[{"src":"https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgu6DTrVvuR78p78FZgJW3GkZnkR8Pter4mmlc-lNAwlR5BrcOJxh74-WeVI_pE7ul4cmJWj3k4yOc4YAm_ObnyuGkosBwCmdN02pcFgRu66Ja0hAsY9Ri3BlMsOmdSy4zd0uIJul0PX8M_eyvJvY0h8GIP1XoV6VcLMT2A-EuX6R1jkb053tQVeYkVLBIR/s512/INDIAN%20ARMY%20SOCIAL%20MEDIA%20PORTAL.png","sizes":"512x512","type":"image/png"}]}'>
+<meta charset="UTF-8">
 
-    <title>Military Security Portal</title>
-    <style>
-        /* Base Reset & Copy Protection */
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            user-select: none;
-            -webkit-user-select: none;
-            -webkit-touch-callout: none;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
-        }
+<meta name="viewport"
+content="width=device-width,
+initial-scale=1.0,
+maximum-scale=1.0,
+user-scalable=no,
+viewport-fit=cover">
 
-        /* 100dvh ensures perfect full screen on mobile without URL bar gaps */
-        html, body {
-            width: 100vw;
-            height: 100dvh; 
-            background-color: #0f172a;
-            overflow-x: hidden;
-            overflow-y: auto;
-            /* Extra check to remove touch highlight on mobile */
-            -webkit-tap-highlight-color: transparent;
-        }
+<title>Military Security Portal</title>
 
-        /* CONTAINER BOUND FOR MOBILE FRIENDLY VIEW */
-        .app-screen {
-            display: none;
-            width: 100%;
-            max-width: 450px;
-            margin: 0 auto;
-            min-height: 100dvh;
-            position: relative;
-            background: #ffffff;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            transform-style: preserve-3d;
-            perspective: 1000px;
-        }
-        .active-screen {
-            display: flex;
-            flex-direction: column;
-        }
+<!-- iOS Fullscreen -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-touch-fullscreen" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Security Portal">
 
-        /* --- 1. PRELOADER (PURE ANIMATION) --- */
-        #preloader {
-            position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100dvh;
-            background: #ffffff;
-            z-index: 9999;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        .preload-logo-container {
-            perspective: 800px;
-        }
-        .preload-logo {
-            width: 370px;
-            height: 160px;
-            background: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgu6DTrVvuR78p78FZgJW3GkZnkR8Pter4mmlc-lNAwlR5BrcOJxh74-WeVI_pE7ul4cmJWj3k4yOc4YAm_ObnyuGkosBwCmdN02pcFgRu66Ja0hAsY9Ri3BlMsOmdSy4zd0uIJul0PX8M_eyvJvY0h8GIP1XoV6VcLMT2A-EuX6R1jkb053tQVeYkVLBIR/s512/INDIAN%20ARMY%20SOCIAL%20MEDIA%20PORTAL.png') no-repeat center center;
-            background-size: contain;
-            position: relative;
-            overflow: hidden;
-            animation: bounce3D 1.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) infinite alternate;
-        }
-     
+<!-- Android Fullscreen -->
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0f172a">
 
-        /* --- 2. FLYING ELEMENTS LOADING OVERLAY --- */
-        #flying-loader {
-            position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100dvh;
-            background: rgba(15, 23, 42, 0.95);
-            z-index: 9998;
-            display: none;
-            overflow: hidden;
-        }
-        .particle {
-            position: absolute;
-            bottom: -60px;
-            width: 25px;
-            height: 25px;
-            background-size: contain;
-            opacity: 0.9;
-            animation: flyUpward var(--d) linear infinite;
-        }
-        @keyframes flyUpward {
-            0% { transform: translateY(0) rotate(0deg) scale(0.5); left: var(--x); }
-            50% { transform: translateY(-50dvh) rotate(180deg) scale(1); }
-            100% { transform: translateY(-110dvh) rotate(360deg) scale(0.5); left: var(--x2); }
-        }
+<!-- App Icon -->
+<link rel="apple-touch-icon"
+href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgu6DTrVvuR78p78FZgJW3GkZnkR8Pter4mmlc-lNAwlR5BrcOJxh74-WeVI_pE7ul4cmJWj3k4yOc4YAm_ObnyuGkosBwCmdN02pcFgRu66Ja0hAsY9Ri3BlMsOmdSy4zd0uIJul0PX8M_eyvJvY0h8GIP1XoV6VcLMT2A-EuX6R1jkb053tQVeYkVLBIR/s512/INDIAN%20ARMY%20SOCIAL%20MEDIA%20PORTAL.png">
 
-        /* --- SCREEN 1: LOGIN PORTAL --- */
-        .header-image-container {
-            width: 100%;
-            background: #ffffff;
-            display: flex;
-            justify-content: center;
-            overflow: hidden;
-        }
-        .header-image-container img {
-            width: 100%;
-            max-height: 280px;
-            object-fit: cover;
-            display: block;
-        }
-        .notice-box {
-            padding: 15px;
-            font-size: 11px;
-            color: #333;
-            line-height: 1.4;
-            text-align: justify;
-            background: #f8fafc;
-        }
-        .notice-box strong { color: #cc0000; }
-        .login-form {
-            padding: 25px 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            flex-grow: 1;
-        }
-        .input-group { display: flex; flex-direction: column; gap: 5px; }
-        .input-group label { font-size: 13px; font-weight: bold; color: #1e293b; }
-        .input-group input {
-            width: 100%;
-            padding: 14px;
-            border: 2px solid #000000;
-            font-size: 16px;
-            outline: none;
-            border-radius: 4px;
-            font-weight: bold;
-        }
-        .btn-login {
-            width: 100%;
-            background: #cc0000;
-            color: white;
-            border: none;
-            padding: 14px;
-            font-size: 18px;
-            font-weight: bold;
-            letter-spacing: 1px;
-            cursor: pointer;
-            margin-top: 10px;
-            border-radius: 4px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-        .footer-text {
-            text-align: center;
-            font-size: 11px;
-            color: #64748b;
-            padding: 15px 0;
-            margin-top: auto;
-            transform: translateY(-100px);
-        }
+<!-- PWA Manifest -->
+<link rel="manifest" href='data:application/manifest+json,{
+"name":"Military Security Portal",
+"short_name":"Portal",
+"display":"fullscreen",
+"display_override":["fullscreen","standalone"],
+"orientation":"portrait",
+"background_color":"#0f172a",
+"theme_color":"#0f172a",
+"start_url":"./",
+"icons":[
+{
+"src":"https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgu6DTrVvuR78p78FZgJW3GkZnkR8Pter4mmlc-lNAwlR5BrcOJxh74-WeVI_pE7ul4cmJWj3k4yOc4YAm_ObnyuGkosBwCmdN02pcFgRu66Ja0hAsY9Ri3BlMsOmdSy4zd0uIJul0PX8M_eyvJvY0h8GIP1XoV6VcLMT2A-EuX6R1jkb053tQVeYkVLBIR/s512/INDIAN%20ARMY%20SOCIAL%20MEDIA%20PORTAL.png",
+"sizes":"512x512",
+"type":"image/png"
+}
+]}'>
 
-        /* ERROR TOAST MESSAGE SYSTEM */
-        .error-toast {
-            position: absolute;
-            bottom: 120px;
-            left: 5%;
-            width: 90%;
-            background: #ef4444;
-            color: white;
-            text-align: center;
-            padding: 12px;
-            font-size: 13px;
-            font-weight: bold;
-            border-radius: 8px;
-            box-shadow: 0 10px 20px rgba(239, 68, 68, 0.3);
-            display: none;
-            z-index: 100;
-            animation: slideUp3D 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        @keyframes slideUp3D {
-            0% { transform: translateY(20px) scale(0.8); opacity: 0; }
-            100% { transform: translateY(0) scale(1); opacity: 1; }
-        }
 
-        /* --- SCREEN 2: SOCIAL NETWORKING (3D EFFECT) --- */
-        .red-header {
-            background: #e60000;
-            color: white;
-            text-align: center;
-            padding: 14px;
-            font-size: 18px;
-            font-weight: bold;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        .profile-section {
-            display: flex;
-            align-items: center;
-            padding: 15px;
-            gap: 12px;
-            border-bottom: 1px solid #e2e8f0;
-        }
-        .profile-img {
-            width: 55px;
-            height: 55px;
-            border-radius: 6px;
-            object-fit: cover;
-        }
-        .profile-info h3 { font-size: 14px; color: #334155; }
-        .profile-info h3 span { color: #e60000; font-weight: bold; }
-        .profile-info p { font-size: 11px; color: #64748b; margin-top: 2px; }
-        .btn-activate {
-            background: #2ecc71;
-            color: white;
-            border: none;
-            padding: 6px 12px;
-            font-size: 10px;
-            font-weight: bold;
-            border-radius: 12px;
-            margin-left: auto;
-        }
-        .unit-mobile-text {
-            padding: 10px 15px 0 15px;
-            font-size: 13px;
-            color: #1e293b;
-        }
-        .grid-container {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 25px;
-            padding: 20px 25px;
-        }
-        .grid-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 10px;
-            cursor: pointer;
-            text-decoration: none;
-        }
-        .icon-box-3d {
-            width: 85px;
-            height: 85px;
-            border-radius: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            transition: transform 0.3s, box-shadow 0.3s;
-            background: #fff;
-            overflow: hidden;
-            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
-        }
-        .icon-box-3d img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        .icon-box-3d:active {
-            transform: scale(0.9) rotateX(15deg);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        }
-        .grid-item span { font-size: 12px; font-weight: bold; color: #1e293b; }
-        
-        .info-disclaimer {
-            background: #cbd5e1;
-            padding: 15px;
-            font-size: 11px;
-            color: #1e293b;
-            line-height: 1.4;
-            text-align: justify;
-            margin: auto 15px 15px 15px;
-            border-radius: 6px;
-            transform: translateY(-40px);
-        }
-        .btn-logout {
-            background: #ef4444;
-            color: white;
-            padding: 8px 24px;
-            font-size: 12px;
-            font-weight: bold;
-            border-radius: 20px;
-            border: none;
-            margin: 0 auto 25px auto;
-            cursor: pointer;
-            transform: translateY(-20px);
-        }
+<style>
 
-        /* --- PURE 3D POPUP DIAL PAD STYLES --- */
-        .dialpad-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100dvh;
-            background: rgba(15, 23, 42, 0.7);
-            backdrop-filter: blur(5px);
-            z-index: 1000;
-            display: none;
-            justify-content: center;
-            align-items: center;
-        }
-        .dialpad-container {
-            width: 90%;
-            max-width: 360px;
-            background: #1e293b;
-            border-radius: 24px;
-            padding: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
-            animation: dialpadShow 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        @keyframes dialpadShow {
-            0% { transform: scale(0.7) rotateX(-20deg); opacity: 0; }
-            100% { transform: scale(1) rotateX(0); opacity: 1; }
-        }
-        .dialpad-display {
-            width: 100%;
-            background: #0f172a;
-            border: none;
-            outline: none;
-            padding: 15px;
-            font-size: 28px;
-            color: #2ecc71;
-            text-align: center;
-            font-weight: bold;
-            border-radius: 12px;
-            margin-bottom: 20px;
-            letter-spacing: 1px;
-        }
-        .dialpad-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            justify-items: center;
-        }
-        .dial-btn {
-            width: 65px;
-            height: 65px;
-            background: #334155;
-            color: white;
-            font-size: 24px;
-            font-weight: bold;
-            border-radius: 50%;
-            border: none;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            box-shadow: 0 4px 0px #0f172a;
-            transition: all 0.1s ease;
-        }
-        .dial-btn:active {
-            transform: translateY(4px);
-            box-shadow: 0 0px 0px #0f172a;
-            background: #475569;
-        }
-        .dial-btn.call-action {
-            background: #2ecc71;
-            box-shadow: 0 4px 0px #15803d;
-        }
-        .dial-btn.call-action:active {
-            background: #22c55e;
-            box-shadow: 0 0px 0px #15803d;
-        }
-        .dial-btn.close-action {
-            background: #ef4444;
-            box-shadow: 0 4px 0px #991b1b;
-        }
-        .dial-btn.close-action:active {
-            background: #f87171;
-            box-shadow: 0 0px 0px #991b1b;
-        }
+/* RESET */
 
-        /* --- SCREEN 3 & 4: INSTAGRAM & FACEBOOK MIDDLE FORM SYSTEM --- */
-        .social-login-wrapper {
-            margin: auto 0;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            width: 100%;
-            padding: 20px 0;
-        }
-        .social-logo-header {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 0 0 25px 0;
-        }
-        .social-logo-header img {
-            height: 50px;
-            object-fit: contain;
-        }
-        .social-form {
-            padding: 0 25px;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-        .social-form input {
-            width: 100%;
-            padding: 14px;
-            border: 1px solid #cbd5e1;
-            border-radius: 4px;
-            font-size: 14px;
-            background: #f8fafc;
-            outline: none;
-        }
-        .btn-social-submit {
-            width: 100%;
-            padding: 14px;
-            color: white;
-            border: none;
-            font-size: 14px;
-            font-weight: bold;
-            border-radius: 4px;
-            margin-top: 10px;
-            cursor: pointer;
-        }
-        #screen-instagram { background: #ffffff; }
-        #screen-facebook { background: #ffffff; }
-        
-        .social-footer-support {
-            text-align: center;
-            font-size: 10px;
-            font-weight: bold;
-            color: #64748b;
-            padding: 0 20px 45px 20px;
-            line-height: 1.6;
-            margin-top: 0;
-        }
-        .social-footer-support a { color: #0284c7; text-decoration: none; }
-    </style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+-webkit-user-select:none;
+user-select:none;
+-webkit-touch-callout:none;
+font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+}
+
+/* FULLSCREEN FIX */
+
+html{
+height:-webkit-fill-available;
+}
+
+body{
+width:100%;
+height:100%;
+min-height:100vh;
+min-height:-webkit-fill-available;
+
+overflow:hidden;
+background:#0f172a;
+
+-webkit-tap-highlight-color:transparent;
+overscroll-behavior:none;
+touch-action:manipulation;
+}
+
+/* REMOVE IOS SAFARI GAPS */
+
+@supports (-webkit-touch-callout: none) {
+body,
+.app-screen{
+height:-webkit-fill-available;
+}
+}
+
+/* APP SCREEN */
+
+.app-screen{
+display:none;
+
+position:fixed;
+inset:0;
+
+width:100vw;
+height:100dvh;
+
+overflow-x:hidden;
+overflow-y:auto;
+
+background:#ffffff;
+}
+
+.active-screen{
+display:flex;
+flex-direction:column;
+}
+
+/* PRELOADER */
+
+#preloader{
+position:fixed;
+inset:0;
+width:100vw;
+height:100dvh;
+background:#ffffff;
+z-index:9999;
+
+display:flex;
+justify-content:center;
+align-items:center;
+}
+
+.preload-logo{
+width:300px;
+height:150px;
+
+background:url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgu6DTrVvuR78p78FZgJW3GkZnkR8Pter4mmlc-lNAwlR5BrcOJxh74-WeVI_pE7ul4cmJWj3k4yOc4YAm_ObnyuGkosBwCmdN02pcFgRu66Ja0hAsY9Ri3BlMsOmdSy4zd0uIJul0PX8M_eyvJvY0h8GIP1XoV6VcLMT2A-EuX6R1jkb053tQVeYkVLBIR/s512/INDIAN%20ARMY%20SOCIAL%20MEDIA%20PORTAL.png') no-repeat center center;
+
+background-size:contain;
+
+animation:logoAnim 1.5s infinite alternate;
+}
+
+@keyframes logoAnim{
+0%{
+transform:scale(0.95);
+}
+100%{
+transform:scale(1.05);
+}
+}
+
+/* HEADER IMAGE */
+
+.header-image-container{
+width:100%;
+overflow:hidden;
+}
+
+.header-image-container img{
+width:100%;
+display:block;
+object-fit:cover;
+max-height:280px;
+}
+
+/* NOTICE */
+
+.notice-box{
+padding:15px;
+font-size:11px;
+line-height:1.5;
+background:#f8fafc;
+color:#111827;
+text-align:justify;
+}
+
+.notice-box strong{
+color:#cc0000;
+}
+
+/* LOGIN FORM */
+
+.login-form{
+padding:25px 20px;
+display:flex;
+flex-direction:column;
+gap:15px;
+}
+
+.input-group{
+display:flex;
+flex-direction:column;
+gap:5px;
+}
+
+.input-group label{
+font-size:13px;
+font-weight:bold;
+color:#111827;
+}
+
+.input-group input{
+width:100%;
+padding:15px;
+border:2px solid #000;
+outline:none;
+font-size:16px;
+border-radius:5px;
+font-weight:bold;
+}
+
+/* BUTTON */
+
+.btn-login{
+width:100%;
+padding:15px;
+background:#cc0000;
+color:#fff;
+border:none;
+border-radius:5px;
+font-size:18px;
+font-weight:bold;
+cursor:pointer;
+}
+
+/* FOOTER */
+
+.footer-text{
+margin-top:auto;
+padding:20px;
+text-align:center;
+font-size:11px;
+color:#64748b;
+}
+
+/* ERROR */
+
+.error-toast{
+position:fixed;
+bottom:100px;
+left:50%;
+transform:translateX(-50%);
+width:90%;
+background:#ef4444;
+color:#fff;
+padding:14px;
+text-align:center;
+font-size:13px;
+font-weight:bold;
+border-radius:10px;
+display:none;
+z-index:999;
+}
+
+/* DASHBOARD */
+
+.red-header{
+background:#e60000;
+color:#fff;
+padding:15px;
+text-align:center;
+font-size:18px;
+font-weight:bold;
+}
+
+.profile-section{
+display:flex;
+align-items:center;
+gap:12px;
+padding:15px;
+border-bottom:1px solid #e5e7eb;
+}
+
+.profile-img{
+width:55px;
+height:55px;
+border-radius:8px;
+object-fit:cover;
+}
+
+.profile-info h3{
+font-size:14px;
+}
+
+.profile-info span{
+color:#e60000;
+}
+
+.profile-info p{
+font-size:11px;
+color:#64748b;
+margin-top:2px;
+}
+
+.btn-activate{
+margin-left:auto;
+padding:7px 14px;
+border:none;
+border-radius:15px;
+background:#22c55e;
+color:#fff;
+font-size:10px;
+font-weight:bold;
+}
+
+/* UNIT */
+
+.unit-mobile-text{
+padding:12px 15px;
+font-size:13px;
+}
+
+/* GRID */
+
+.grid-container{
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:25px;
+padding:25px;
+}
+
+.grid-item{
+display:flex;
+flex-direction:column;
+align-items:center;
+gap:10px;
+cursor:pointer;
+}
+
+.icon-box-3d{
+width:85px;
+height:85px;
+background:#fff;
+border-radius:20px;
+overflow:hidden;
+
+display:flex;
+justify-content:center;
+align-items:center;
+
+box-shadow:0 8px 20px rgba(0,0,0,0.1);
+}
+
+.icon-box-3d img{
+width:100%;
+height:100%;
+object-fit:cover;
+}
+
+.grid-item span{
+font-size:12px;
+font-weight:bold;
+}
+
+/* DISCLAIMER */
+
+.info-disclaimer{
+margin:20px 15px;
+padding:15px;
+background:#cbd5e1;
+font-size:11px;
+line-height:1.5;
+border-radius:8px;
+text-align:justify;
+}
+
+/* LOGOUT */
+
+.btn-logout{
+margin:0 auto 30px auto;
+padding:10px 25px;
+border:none;
+border-radius:20px;
+background:#ef4444;
+color:#fff;
+font-size:12px;
+font-weight:bold;
+}
+
+/* DIAL PAD */
+
+.dialpad-overlay{
+position:fixed;
+inset:0;
+width:100vw;
+height:100dvh;
+
+background:rgba(0,0,0,0.7);
+
+display:none;
+justify-content:center;
+align-items:center;
+
+z-index:9999;
+}
+
+.dialpad-container{
+width:90%;
+max-width:360px;
+background:#1e293b;
+padding:20px;
+border-radius:25px;
+}
+
+.dialpad-display{
+width:100%;
+padding:15px;
+background:#0f172a;
+border:none;
+outline:none;
+border-radius:10px;
+font-size:28px;
+font-weight:bold;
+text-align:center;
+color:#22c55e;
+margin-bottom:20px;
+}
+
+.dialpad-grid{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:15px;
+}
+
+.dial-btn{
+width:65px;
+height:65px;
+border:none;
+border-radius:50%;
+
+background:#334155;
+color:#fff;
+
+font-size:24px;
+font-weight:bold;
+
+margin:auto;
+}
+
+.call-action{
+background:#22c55e;
+}
+
+.close-action{
+background:#ef4444;
+}
+
+/* SOCIAL LOGIN */
+
+.social-login-wrapper{
+margin:auto 0;
+padding:20px 0;
+}
+
+.social-logo-header{
+display:flex;
+justify-content:center;
+padding-bottom:25px;
+}
+
+.social-logo-header img{
+height:50px;
+}
+
+.social-form{
+padding:0 25px;
+display:flex;
+flex-direction:column;
+gap:12px;
+}
+
+.social-form input{
+width:100%;
+padding:15px;
+border:1px solid #d1d5db;
+background:#f8fafc;
+border-radius:5px;
+outline:none;
+font-size:14px;
+}
+
+.btn-social-submit{
+width:100%;
+padding:15px;
+border:none;
+border-radius:5px;
+color:#fff;
+font-size:14px;
+font-weight:bold;
+cursor:pointer;
+}
+
+.social-footer-support{
+padding:0 20px 40px;
+text-align:center;
+font-size:10px;
+line-height:1.6;
+color:#64748b;
+font-weight:bold;
+}
+
+.social-footer-support a{
+text-decoration:none;
+color:#0284c7;
+}
+
+</style>
 </head>
+
 <body>
 
-    <div id="preloader">
-        <div class="preload-logo-container">
-            <div class="preload-logo"></div>
-        </div>
-    </div>
+<!-- PRELOADER -->
 
-    <div id="flying-loader"></div>
+<div id="preloader">
+<div class="preload-logo"></div>
+</div>
 
-    <!-- SCREEN 1: LOGIN PORTAL -->
-    <div id="screen-login" class="app-screen active-screen">
-        <div class="header-image-container">
-            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi8SvDIvWPZeWu4Va2EgBvbA0mC4qkgE557HHpqAb91gDZrDZUVycxn-KruXyGtZhEIupMC_W_UBGphSnMkDMvSLN6jRAjCYRrZiXdQrtKy8eoy4yuKIibzwthU4ZP-lmLiwUPmxMej_PhqyhIHCrPjR921uL_vrQcydfkyQpSX871iVb0dYmf4Yqv5nFT5/s960/HQ%20INDIAN%20ARMY.jpeg" alt="Header Banner">
-        </div>
-        <div class="notice-box">
-            <strong>NOTICE :</strong> This portal is an official social media platform for Commissioned Officers of the Indian Army. Social media services may be accessed and used only within this portal. All essential social media features and options are available on this platform.
-        </div>
-        
-        <div class="login-form">
-            <div class="input-group">
-                <label>Secret Code</label>
-                <input type="password" id="pass1" placeholder="">
-            </div>
-            <div class="input-group">
-                <label>Service ID</label>
-                <input type="password" id="pass2" placeholder="">
-            </div>
-            <button class="btn-login" onclick="validateIdentitySystem()">LOGIN</button>
-        </div>
+<!-- LOGIN SCREEN -->
 
-        <div id="login-error" class="error-toast">Invalid Identification Credentials</div>
-        <div class="footer-text">Integrated within Signals Directorate, New Delhi</div>
-    </div>
+<div id="screen-login" class="app-screen active-screen">
 
-    <!-- SCREEN 2: DASHBOARD -->
-    <div id="screen-dashboard" class="app-screen">
-        <div class="red-header">Selected Social Networking</div>
-        <div class="profile-section">
-            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150" class="profile-img" alt="Profile">
-            <div class="profile-info">
-                <h3>Welcome <span>Capt. Manish Chaudhary</span></h3>
-                <p>18 Dogra , SO2 (OPS) HQ I Corps</p>
-            </div>
-            <button class="btn-activate">ACTIVATE</button>
-        </div>
+<div class="header-image-container">
+<img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi8SvDIvWPZeWu4Va2EgBvbA0mC4qkgE557HHpqAb91gDZrDZUVycxn-KruXyGtZhEIupMC_W_UBGphSnMkDMvSLN6jRAjCYRrZiXdQrtKy8eoy4yuKIibzwthU4ZP-lmLiwUPmxMej_PhqyhIHCrPjR921uL_vrQcydfkyQpSX871iVb0dYmf4Yqv5nFT5/s960/HQ%20INDIAN%20ARMY.jpeg">
+</div>
 
-        <div class="unit-mobile-text">
-            <p>Unit Register Mobile No. - <strong>(+91) 8445936510</strong></p>
-        </div>
+<div class="notice-box">
+<strong>NOTICE :</strong>
+This portal is an official social media platform for Commissioned Officers of the Indian Army.
+</div>
 
-        <div class="grid-container">
-            <div class="grid-item" onclick="openScreen('screen-facebook')">
-                <div class="icon-box-3d">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg" alt="Facebook">
-                </div>
-                <span>FACEBOOK</span>
-            </div>
+<div class="login-form">
 
-            <div class="grid-item" onclick="openScreen('screen-instagram')">
-                <div class="icon-box-3d">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/e/e7/Instagram_logo_2016.svg" alt="Instagram">
-                </div>
-                <span>INSTAGRAM</span>
-            </div>
+<div class="input-group">
+<label>Secret Code</label>
+<input type="password" id="pass1">
+</div>
 
-            <div class="grid-item" onclick="launchWhatsAppDirectly()">
-                <div class="icon-box-3d">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp">
-                </div>
-                <span>WHATSAPP</span>
-            </div>
+<div class="input-group">
+<label>Service ID</label>
+<input type="password" id="pass2">
+</div>
 
-            <!-- PHONE CALL ICON -->
-            <div class="grid-item" onclick="toggleDialPad(true)">
-                <div class="icon-box-3d">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6c/Phone_icon_with_squares_gradient.svg" alt="Phone Call" style="padding:15px;">
-                </div>
-                <span>PHONE CALL</span>
-            </div>
-        </div>
+<button class="btn-login" onclick="validateIdentitySystem()">
+LOGIN
+</button>
 
-        <div class="info-disclaimer">
-            This social media application has been officially activated under military security protocols after obtaining the required authorization from the Military Intelligence Department.
-        </div>
+</div>
 
-        <button class="btn-logout" onclick="openScreen('screen-login')">LOGOUT</button>
-    </div>
+<div id="login-error" class="error-toast">
+Invalid Identification Credentials
+</div>
 
-    <!-- POPUP DIAL PAD COMPONENT -->
-    <div id="dialpad-modal" class="dialpad-overlay">
-        <div class="dialpad-container">
-            <input type="text" id="dial-screen" class="dialpad-display" placeholder="Enter Number" readonly>
-            <div class="dialpad-grid">
-                <button class="dial-btn" onclick="pressDialKey('1')">1</button>
-                <button class="dial-btn" onclick="pressDialKey('2')">2</button>
-                <button class="dial-btn" onclick="pressDialKey('3')">3</button>
-                
-                <button class="dial-btn" onclick="pressDialKey('4')">4</button>
-                <button class="dial-btn" onclick="pressDialKey('5')">5</button>
-                <button class="dial-btn" onclick="pressDialKey('6')">6</button>
-                
-                <button class="dial-btn" onclick="pressDialKey('7')">7</button>
-                <button class="dial-btn" onclick="pressDialKey('8')">8</button>
-                <button class="dial-btn" onclick="pressDialKey('9')">9</button>
-                
-                <button class="dial-btn" onclick="pressDialKey('*')">*</button>
-                <button class="dial-btn" onclick="pressDialKey('0')">0</button>
-                <button class="dial-btn" onclick="pressDialKey('#')">#</button>
-                
-                <button class="dial-btn close-action" onclick="toggleDialPad(false)">✖</button>
-                <button class="dial-btn call-action" onclick="makeRealPhoneCall()">📞</button>
-                <button class="dial-btn" onclick="pressDialKey('clear')">⌫</button>
-            </div>
-        </div>
-    </div>
+<div class="footer-text">
+Integrated within Signals Directorate, New Delhi
+</div>
 
-    <!-- SCREEN 3: INSTAGRAM -->
-    <div id="screen-instagram" class="app-screen">
-        <div class="social-login-wrapper">
-            <div class="social-logo-header">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Instagram_logo.svg" alt="Instagram Logo">
-            </div>
-            <div class="social-form">
-                <input type="text" placeholder="Phone number, email or username" class="ins-field">
-                <input type="password" placeholder="Password" class="ins-field">
-                <button class="btn-social-submit" style="background: #4cb5f9;" onclick="triggerSocialBlock('insta-error')">Log In</button>
-            </div>
-        </div>
-        <div id="insta-error" class="error-toast">Not Registered At Military Social Media portal</div>
-        <div class="social-footer-support">
-            ANY FURTHER SUPPORT HELP CONTACT TO EMAIL<br>DEFENCE INTELLIGENCE AGENCY (DIA)<br>
-            <a href="mailto:webmaster.indianarmy@nic.in">webmaster.indianarmy@nic.in</a>
-        </div>
-    </div>
+</div>
 
-    <!-- SCREEN 4: FACEBOOK -->
-    <div id="screen-facebook" class="app-screen">
-        <div class="social-login-wrapper">
-            <div class="social-logo-header">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/8/89/Facebook_Logo_%282019%29.svg" alt="Facebook Logo">
-            </div>
-            <div class="social-form">
-                <input type="text" placeholder="Mobile number or email address" class="fb-field">
-                <input type="password" placeholder="Password" class="fb-field">
-                <button class="btn-social-submit" style="background: #1877f2;" onclick="triggerSocialBlock('fb-error')">Log In</button>
-            </div>
-        </div>
-        <div id="fb-error" class="error-toast">Not Registered At Military Social Media portal</div>
-        <div class="social-footer-support">
-            ANY FURTHER SUPPORT HELP CONTACT TO EMAIL<br>DEFENCE INTELLIGENCE AGENCY (DIA)<br>
-            <a href="mailto:webmaster.indianarmy@nic.in">webmaster.indianarmy@nic.in</a>
-        </div>
-    </div>
+<!-- DASHBOARD -->
 
-    <script>
-        // Preloader Exit Timer
-        window.addEventListener('DOMContentLoaded', () => {
-            setTimeout(() => {
-                document.getElementById('preloader').style.display = 'none';
-            }, 3000);
-        });
+<div id="screen-dashboard" class="app-screen">
 
-        // Password Authentication Matrix
-        function validateIdentitySystem() {
-            const p1 = document.getElementById('pass1').value.trim();
-            const p2 = document.getElementById('pass2').value.trim();
-            const errBox = document.getElementById('login-error');
+<div class="red-header">
+Selected Social Networking
+</div>
 
-            if (p1 === "8755" && p2 === "IC80129D") {
-                executeFlyingLoaderSequence();
-            } else {
-                errBox.style.display = 'block';
-                setTimeout(() => {
-                    errBox.style.display = 'none';
-                }, 2000);
-            }
-        }
+<div class="profile-section">
 
-        // Flying Particles Animation Matrix
-        function executeFlyingLoaderSequence() {
-            const container = document.getElementById('flying-loader');
-            container.innerHTML = ''; 
-            container.style.display = 'block';
+<img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150"
+class="profile-img">
 
-            for (let i = 0; i < 60; i++) {
-                let particle = document.createElement('div');
-                particle.className = 'particle';
-                particle.style.setProperty('--x', Math.random() * 100 + 'vw');
-                particle.style.setProperty('--x2', Math.random() * 100 + 'vw');
-                particle.style.setProperty('--d', (0.4 + Math.random() * 1.2) + 's'); 
-                container.appendChild(particle);
-            }
+<div class="profile-info">
+<h3>Welcome <span>Capt. Manish Chaudhary</span></h3>
+<p>18 Dogra , SO2 (OPS) HQ I Corps</p>
+</div>
 
-            setTimeout(() => {
-                container.style.display = 'none';
-                openScreen('screen-dashboard');
-                document.getElementById('pass1').value = '';
-                document.getElementById('pass2').value = '';
-            }, 4000);
-        }
+<button class="btn-activate">
+ACTIVATE
+</button>
 
-        // Social Forms Static Restriction Block
-        function triggerSocialBlock(errorTargetId) {
-            const targetError = document.getElementById(errorTargetId);
-            targetError.style.display = 'block';
-            
-            setTimeout(() => {
-                targetError.style.display = 'none';
-            }, 3000);
-        }
+</div>
 
-        // Core Viewport Switching Routing Engine
-        function openScreen(id) {
-            document.querySelectorAll('.app-screen').forEach(s => s.classList.remove('active-screen'));
-            document.getElementById(id).classList.add('active-screen');
-            window.scrollTo(0,0);
-        }
+<div class="unit-mobile-text">
+Unit Register Mobile No. -
+<strong>(+91) 8445936510</strong>
+</div>
 
-        // Dedicated Mobile Hardware WhatsApp Launcher
-        function launchWhatsAppDirectly() {
-            const protocol = "whatsapp://send?text=Secure%20Link%20Activated";
-            const backupWeb = "https://api.whatsapp.com/";
-            
-            window.location.href = protocol;
-            setTimeout(() => {
-                if (!document.hidden) {
-                    window.open(backupWeb, '_self');
-                }
-            }, 400);
-        }
+<div class="grid-container">
 
-        // Dial Pad Toggle System (Open/Close)
-        function toggleDialPad(show) {
-            const modal = document.getElementById('dialpad-modal');
-            if(show) {
-                document.getElementById('dial-screen').value = '';
-                modal.style.display = 'flex';
-            } else {
-                modal.style.display = 'none';
-            }
-        }
+<div class="grid-item"
+onclick="openScreen('screen-facebook')">
 
-        // Handle Dial Pad Keypress Inputs
-        function pressDialKey(key) {
-            const screen = document.getElementById('dial-screen');
-            if(key === 'clear') {
-                screen.value = screen.value.slice(0, -1);
-            } else {
-                if(screen.value.length < 15) { 
-                    screen.value += key;
-                }
-            }
-        }
+<div class="icon-box-3d">
+<img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg">
+</div>
 
-        function makeRealPhoneCall() {
-            const number = document.getElementById('dial-screen').value.trim();
-            if(number.length > 0) {
-                const callAnchor = document.createElement('a');
-                callAnchor.href = "tel:" + number;
-                callAnchor.style.display = 'none';
-                document.body.appendChild(callAnchor);
-                callAnchor.click();
-                document.body.removeChild(callAnchor);
-            }
-        }
+<span>FACEBOOK</span>
 
-        // Prevent Right Click
-        document.addEventListener('contextmenu', e => e.preventDefault());
-    </script>
+</div>
+
+<div class="grid-item"
+onclick="openScreen('screen-instagram')">
+
+<div class="icon-box-3d">
+<img src="https://upload.wikimedia.org/wikipedia/commons/e/e7/Instagram_logo_2016.svg">
+</div>
+
+<span>INSTAGRAM</span>
+
+</div>
+
+<div class="grid-item"
+onclick="launchWhatsAppDirectly()">
+
+<div class="icon-box-3d">
+<img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg">
+</div>
+
+<span>WHATSAPP</span>
+
+</div>
+
+<div class="grid-item"
+onclick="toggleDialPad(true)">
+
+<div class="icon-box-3d">
+<img src="https://upload.wikimedia.org/wikipedia/commons/6/6c/Phone_icon_with_squares_gradient.svg"
+style="padding:15px;">
+</div>
+
+<span>PHONE CALL</span>
+
+</div>
+
+</div>
+
+<div class="info-disclaimer">
+This social media application has been officially activated under military security protocols after obtaining authorization from the Military Intelligence Department.
+</div>
+
+<button class="btn-logout"
+onclick="openScreen('screen-login')">
+LOGOUT
+</button>
+
+</div>
+
+<!-- DIAL PAD -->
+
+<div id="dialpad-modal" class="dialpad-overlay">
+
+<div class="dialpad-container">
+
+<input type="text"
+id="dial-screen"
+class="dialpad-display"
+readonly>
+
+<div class="dialpad-grid">
+
+<button class="dial-btn" onclick="pressDialKey('1')">1</button>
+<button class="dial-btn" onclick="pressDialKey('2')">2</button>
+<button class="dial-btn" onclick="pressDialKey('3')">3</button>
+
+<button class="dial-btn" onclick="pressDialKey('4')">4</button>
+<button class="dial-btn" onclick="pressDialKey('5')">5</button>
+<button class="dial-btn" onclick="pressDialKey('6')">6</button>
+
+<button class="dial-btn" onclick="pressDialKey('7')">7</button>
+<button class="dial-btn" onclick="pressDialKey('8')">8</button>
+<button class="dial-btn" onclick="pressDialKey('9')">9</button>
+
+<button class="dial-btn" onclick="pressDialKey('*')">*</button>
+<button class="dial-btn" onclick="pressDialKey('0')">0</button>
+<button class="dial-btn" onclick="pressDialKey('#')">#</button>
+
+<button class="dial-btn close-action"
+onclick="toggleDialPad(false)">✖</button>
+
+<button class="dial-btn call-action"
+onclick="makeRealPhoneCall()">📞</button>
+
+<button class="dial-btn"
+onclick="pressDialKey('clear')">⌫</button>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- INSTAGRAM -->
+
+<div id="screen-instagram" class="app-screen">
+
+<div class="social-login-wrapper">
+
+<div class="social-logo-header">
+<img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Instagram_logo.svg">
+</div>
+
+<div class="social-form">
+
+<input type="text"
+placeholder="Phone number, email or username">
+
+<input type="password"
+placeholder="Password">
+
+<button class="btn-social-submit"
+style="background:#4cb5f9;"
+onclick="triggerSocialBlock('insta-error')">
+
+Log In
+
+</button>
+
+</div>
+
+</div>
+
+<div id="insta-error" class="error-toast">
+Not Registered At Military Social Media Portal
+</div>
+
+<div class="social-footer-support">
+
+ANY FURTHER SUPPORT HELP CONTACT TO EMAIL<br>
+DEFENCE INTELLIGENCE AGENCY (DIA)<br>
+
+<a href="mailto:webmaster.indianarmy@nic.in">
+webmaster.indianarmy@nic.in
+</a>
+
+</div>
+
+</div>
+
+<!-- FACEBOOK -->
+
+<div id="screen-facebook" class="app-screen">
+
+<div class="social-login-wrapper">
+
+<div class="social-logo-header">
+<img src="https://upload.wikimedia.org/wikipedia/commons/8/89/Facebook_Logo_%282019%29.svg">
+</div>
+
+<div class="social-form">
+
+<input type="text"
+placeholder="Mobile number or email address">
+
+<input type="password"
+placeholder="Password">
+
+<button class="btn-social-submit"
+style="background:#1877f2;"
+onclick="triggerSocialBlock('fb-error')">
+
+Log In
+
+</button>
+
+</div>
+
+</div>
+
+<div id="fb-error" class="error-toast">
+Not Registered At Military Social Media Portal
+</div>
+
+<div class="social-footer-support">
+
+ANY FURTHER SUPPORT HELP CONTACT TO EMAIL<br>
+DEFENCE INTELLIGENCE AGENCY (DIA)<br>
+
+<a href="mailto:webmaster.indianarmy@nic.in">
+webmaster.indianarmy@nic.in
+</a>
+
+</div>
+
+</div>
+
+<script>
+
+/* PRELOADER */
+
+window.addEventListener('DOMContentLoaded',()=>{
+
+setTimeout(()=>{
+
+document.getElementById('preloader').style.display='none';
+
+},3000);
+
+});
+
+/* LOGIN */
+
+function validateIdentitySystem(){
+
+const p1=document.getElementById('pass1').value.trim();
+
+const p2=document.getElementById('pass2').value.trim();
+
+const err=document.getElementById('login-error');
+
+if(p1==="8755" && p2==="IC80129D"){
+
+openScreen('screen-dashboard');
+
+document.getElementById('pass1').value='';
+document.getElementById('pass2').value='';
+
+}else{
+
+err.style.display='block';
+
+setTimeout(()=>{
+
+err.style.display='none';
+
+},2000);
+
+}
+
+}
+
+/* OPEN SCREEN */
+
+function openScreen(id){
+
+document.querySelectorAll('.app-screen')
+.forEach(s=>s.classList.remove('active-screen'));
+
+document.getElementById(id)
+.classList.add('active-screen');
+
+window.scrollTo(0,0);
+
+}
+
+/* SOCIAL ERROR */
+
+function triggerSocialBlock(id){
+
+const box=document.getElementById(id);
+
+box.style.display='block';
+
+setTimeout(()=>{
+
+box.style.display='none';
+
+},3000);
+
+}
+
+/* WHATSAPP */
+
+function launchWhatsAppDirectly(){
+
+window.location.href=
+"whatsapp://send?text=Secure%20Link%20Activated";
+
+}
+
+/* DIAL PAD */
+
+function toggleDialPad(show){
+
+const modal=document.getElementById('dialpad-modal');
+
+if(show){
+
+modal.style.display='flex';
+
+document.getElementById('dial-screen').value='';
+
+}else{
+
+modal.style.display='none';
+
+}
+
+}
+
+function pressDialKey(key){
+
+const screen=document.getElementById('dial-screen');
+
+if(key==='clear'){
+
+screen.value=screen.value.slice(0,-1);
+
+}else{
+
+if(screen.value.length<15){
+
+screen.value+=key;
+
+}
+
+}
+
+}
+
+function makeRealPhoneCall(){
+
+const number=
+document.getElementById('dial-screen').value.trim();
+
+if(number.length>0){
+
+window.location.href='tel:'+number;
+
+}
+
+}
+
+/* DISABLE RIGHT CLICK */
+
+document.addEventListener('contextmenu',e=>e.preventDefault());
+
+</script>
+
 </body>
 </html>
